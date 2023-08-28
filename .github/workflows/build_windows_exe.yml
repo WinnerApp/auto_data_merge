@@ -1,0 +1,28 @@
+name: Dart compile window exe
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+   runs-on: windows-latest
+   steps:
+     - uses: actions/checkout@v3
+     - uses: subosito/flutter-action@v2
+       with:
+         version: "3.7.12"
+     - run: dart compile exe bin/auto_data_merge.dart
+     - name: Get flutter version
+        id: get_flutter_version
+        uses: its404/get-flutter-version@v1.0.0
+     - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ steps.get_flutter_version.outputs.version_number }}
+          prerelease: false
+          title: "新版本发布"
+          files: |
+            bin/auto_data_merge.exe
